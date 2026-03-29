@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+/* Aqui nós destruímos a prisão do Vite */
+#app {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important; /* Mata o limite de 1280px */
+  padding: 0 !important;      /* Mata o recuo */
+  margin: 0 !important;       /* Mata a centralização */
+  display: block !important;
+}
+
+canvas {
+  display: block;
+}
