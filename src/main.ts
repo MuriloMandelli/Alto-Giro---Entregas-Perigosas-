@@ -216,8 +216,8 @@ class MenuScene extends Phaser.Scene {
 
     this.add.rectangle(w / 2, h / 2, Math.min(w * 0.85, 800), h * 0.90, 0x0a0a0a, 0.85).setStrokeStyle(2, 0xf1c40f);
     
-    this.add.text(w / 2 + 4, h * 0.12 + 4, 'GIRO ALTO', { fontFamily: 'Impact', fontSize: '72px', color: '#000', padding: { left: 20, right: 20, top: 10, bottom: 10 } }).setOrigin(0.5);
-    this.add.text(w / 2, h * 0.12, 'GIRO ALTO', { fontFamily: 'Impact', fontSize: '72px', color: '#f1c40f', fontStyle: 'italic', stroke: '#2c3e50', strokeThickness: 8, shadow: { offsetX: 4, offsetY: 4, color: '#000', blur: 0, fill: true }, padding: { left: 20, right: 20, top: 10, bottom: 10 } }).setOrigin(0.5);
+    this.add.text(w / 2 + 4, h * 0.12 + 4, 'ALTO GIRO', { fontFamily: 'Impact', fontSize: '72px', color: '#000', padding: { left: 20, right: 20, top: 10, bottom: 10 } }).setOrigin(0.5);
+    this.add.text(w / 2, h * 0.12, 'ALTO GIRO', { fontFamily: 'Impact', fontSize: '72px', color: '#f1c40f', fontStyle: 'italic', stroke: '#2c3e50', strokeThickness: 8, shadow: { offsetX: 4, offsetY: 4, color: '#000', blur: 0, fill: true }, padding: { left: 20, right: 20, top: 10, bottom: 10 } }).setOrigin(0.5);
     
     this.add.rectangle(w / 2, h * 0.22, 400, 2, 0xf1c40f, 0.5);
 
@@ -408,6 +408,8 @@ class GameScene extends Phaser.Scene {
 
   arvoresVisuais!: Phaser.GameObjects.Graphics;
   poeiraEmitter!: Phaser.GameObjects.Particles.ParticleEmitter; cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  teclaA!: Phaser.Input.Keyboard.Key;
+  teclaD!: Phaser.Input.Keyboard.Key;
   
   isGameOver: boolean = false; faseAtual: number = 1; fimDoMapaX: number = 0; meuCarro!: any; 
   bgGradient!: Phaser.GameObjects.Graphics;
@@ -435,6 +437,9 @@ class GameScene extends Phaser.Scene {
     this.criarSistemaDePoeira();
 
     this.cursors = this.input.keyboard!.createCursorKeys();
+    this.teclaA = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.teclaD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    
     this.cameras.main.setZoom(0.7);
 
     this.scene.launch('HUDScene', { fase: this.faseAtual });
@@ -766,27 +771,29 @@ class GameScene extends Phaser.Scene {
     for (let ce = this.rodaFrenteBody.getContactList(); ce; ce = ce.next) { if (ce.contact.isTouching() && (ce.contact.getFixtureA().getUserData() === 'ground' || ce.contact.getFixtureA().getUserData() === 'ponte' || ce.contact.getFixtureA().getUserData() === 'stone' || ce.contact.getFixtureB().getUserData() === 'ground' || ce.contact.getFixtureB().getUserData() === 'ponte' || ce.contact.getFixtureB().getUserData() === 'stone')) noChao = true; }
 
     // ==========================================
-    // NOVA LÓGICA DE CONTROLES (PC + MOBILE)
+    // NOVA LÓGICA DE CONTROLES (PC + MOBILE + WASD)
     // ==========================================
-    // Puxa as informações da HUDScene para saber se o dedo está na tela
     const hudMobile = this.scene.get('HUDScene') as any;
     const mobileAcelerando = hudMobile && hudMobile.isAcelerando;
     const mobileFreando = hudMobile && hudMobile.isFreando;
 
+    const querAcelerar = this.cursors.right.isDown || this.teclaD.isDown || mobileAcelerando;
+    const querFrear = this.cursors.left.isDown || this.teclaA.isDown || mobileFreando;
+
     const velocidadeRad = Math.PI * 12; 
     const forcaInclinar = noChao ? 0.5 : 3.5; 
 
-    // O áudio liga se apertar o teclado OU os botões da tela
-    SoundFX.atualizarMotor(this.cursors.right.isDown || this.cursors.left.isDown || mobileAcelerando || mobileFreando, !noChao);
+    // O áudio liga se estiver tentando acelerar ou frear
+    SoundFX.atualizarMotor(querAcelerar || querFrear, !noChao);
 
-    // Se apertar a seta pra direita OU o botão mobile da direita
-    if (this.cursors.right.isDown || mobileAcelerando) {
+    // Se apertar a seta pra direita, tecla D OU o botão mobile da direita
+    if (querAcelerar) {
       this.molaTras.setMotorSpeed(velocidadeRad); this.molaFrente.setMotorSpeed(velocidadeRad);
       this.chassiBody.applyAngularImpulse(-forcaInclinar, true); 
       if (noChao) { this.poeiraEmitter.start(); this.poeiraEmitter.setPosition(posRT.x * M2P, posRT.y * M2P + 20); } else { this.poeiraEmitter.stop(); }
     } 
-    // Se apertar a seta pra esquerda OU o botão mobile da esquerda
-    else if (this.cursors.left.isDown || mobileFreando) {
+    // Se apertar a seta pra esquerda, tecla A OU o botão mobile da esquerda
+    else if (querFrear) {
       this.molaTras.setMotorSpeed(-velocidadeRad); this.molaFrente.setMotorSpeed(-velocidadeRad);
       this.chassiBody.applyAngularImpulse(forcaInclinar, true); this.poeiraEmitter.stop();
     } 
