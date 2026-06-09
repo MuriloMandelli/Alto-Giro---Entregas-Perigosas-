@@ -2,13 +2,13 @@ import * as Phaser from 'phaser';
 import * as planck from 'planck';
 
 // ==========================================
-// 💥 TRAVA DE TELA CHEIA 💥
+// 💥 TRAVA DE TELA CHEIA (CORRIGIDA PARA FIT) 💥
 // ==========================================
 const style = document.createElement('style');
 style.innerHTML = `
   * { margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }
-  html, body, #app { width: 100vw !important; height: 100vh !important; max-width: none !important; overflow: hidden !important; background-color: #000 !important; display: block !important; }
-  canvas { display: block !important; width: 100vw !important; height: 100vh !important; }
+  html, body, #app { width: 100vw !important; height: 100vh !important; max-width: none !important; overflow: hidden !important; background-color: #050505 !important; display: block !important; }
+  canvas { display: block !important; margin: 0 auto !important; } 
 `;
 document.head.appendChild(style);
 
@@ -225,7 +225,7 @@ class MenuScene extends Phaser.Scene {
     this.add.text(w / 2, h * 0.32, textoNarrativa, { fontFamily: 'Verdana', fontSize: '18px', color: '#ecf0f1', align: 'center', lineSpacing: 6, fontStyle: 'bold', shadow: { offsetX: 2, offsetY: 2, color: '#000', blur: 4, fill: true } }).setOrigin(0.5);
     
     this.add.rectangle(w / 2, h * 0.46, 250, 45, 0x000000, 0.9).setStrokeStyle(2, 0xf1c40f);
-    this.add.text(w / 2, h * 0.46, `🪙 SALDO: ${gameData.moedas}`, { fontFamily: 'Impact', fontSize: '24px', color: '#f1c40f', letterSpacing: 2 }).setOrigin(0.5);
+    this.add.text(w / 2, h * 0.46, `$ SALDO: ${gameData.moedas}`, { fontFamily: 'Impact', fontSize: '24px', color: '#f1c40f', letterSpacing: 2 }).setOrigin(0.5);
 
     const criarBotao = (y: number, texto: string, cor: string, acao: Function) => {
       const btnBg = this.add.rectangle(w / 2, y, 350, 50, 0x000, 0.8).setInteractive({ useHandCursor: true }).setStrokeStyle(3, parseInt(cor.replace('#', '0x')));
@@ -238,7 +238,7 @@ class MenuScene extends Phaser.Scene {
     criarBotao(h * 0.58, '▶ FASE 1: Colinas Verdes', '#2ecc71', () => this.scene.start('GameScene', { level: 1 }));
     criarBotao(h * 0.68, '▶ FASE 2: Floresta Sombria', '#e67e22', () => this.scene.start('GameScene', { level: 2 }));
     criarBotao(h * 0.78, '▶ FASE 3: Deserto Rochoso', '#e74c3c', () => this.scene.start('GameScene', { level: 3 }));
-    criarBotao(h * 0.88, '🛒 ACESSAR GARAGEM', '#3498db', () => this.scene.start('ShopScene'));
+    criarBotao(h * 0.88, '[ ACESSAR GARAGEM ]', '#3498db', () => this.scene.start('ShopScene'));
   }
 }
 
@@ -255,7 +255,7 @@ class ShopScene extends Phaser.Scene {
     this.add.text(w / 2, 80, 'GARAGEM', { fontFamily: 'Impact', fontSize: '56px', color: '#ffffff', stroke: '#000', strokeThickness: 6, padding: { right: 15 } }).setOrigin(0.5);
     
     this.add.rectangle(w / 2, 140, 300, 50, 0x000000, 0.7).setStrokeStyle(2, 0xf1c40f).setOrigin(0.5);
-    this.add.text(w / 2, 140, `🪙 MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '24px', color: '#f1c40f', fontStyle: 'bold' }).setOrigin(0.5);
+    this.add.text(w / 2, 140, `$ MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '24px', color: '#f1c40f', fontStyle: 'bold' }).setOrigin(0.5);
 
     const espacamento = w / 4;
     CATÁLOGO_CARROS.forEach((carro, index) => {
@@ -275,7 +275,7 @@ class ShopScene extends Phaser.Scene {
 
       const isUnlocked = gameData.unlocked.includes(carro.id); const isActive = gameData.activeCar === carro.id;
       const btnBg = this.add.rectangle(xPos, h / 2 + 150, 220, 50, isActive ? 0x27ae60 : (isUnlocked ? 0x2980b9 : 0x000), isActive||isUnlocked ? 1 : 0.8).setInteractive({ useHandCursor: true }).setStrokeStyle(2, isActive ? 0x2ecc71 : (isUnlocked ? 0x3498db : 0xe74c3c));
-      this.add.text(xPos, h / 2 + 150, isActive ? 'SELECIONADO' : (isUnlocked ? 'EQUIPAR' : `COMPRAR 🪙 ${carro.preco}`), { fontFamily: 'Verdana', fontSize: '18px', color: isActive||isUnlocked ? '#fff' : '#e74c3c', fontStyle: 'bold' }).setOrigin(0.5);
+      this.add.text(xPos, h / 2 + 150, isActive ? 'SELECIONADO' : (isUnlocked ? 'EQUIPAR' : `COMPRAR $ ${carro.preco}`), { fontFamily: 'Verdana', fontSize: '18px', color: isActive||isUnlocked ? '#fff' : '#e74c3c', fontStyle: 'bold' }).setOrigin(0.5);
 
       btnBg.on('pointerdown', () => {
         if (isUnlocked) { gameData.activeCar = carro.id; salvarJogo(); this.scene.restart(); }
@@ -284,7 +284,7 @@ class ShopScene extends Phaser.Scene {
       });
     });
 
-    const btnVoltar = this.add.text(20, 20, '⬅ VOLTAR', { fontSize: '20px', color: '#e74c3c', backgroundColor: '#000', padding: { x: 15, y: 10 } }).setStroke('#e74c3c', 2).setInteractive({ useHandCursor: true });
+    const btnVoltar = this.add.text(20, 20, '< VOLTAR', { fontSize: '20px', color: '#e74c3c', backgroundColor: '#000', padding: { x: 15, y: 10 } }).setStroke('#e74c3c', 2).setInteractive({ useHandCursor: true });
     btnVoltar.on('pointerdown', () => this.scene.start('MenuScene'));
   }
 }
@@ -310,15 +310,15 @@ class HUDScene extends Phaser.Scene {
 
     this.hudBar = this.add.rectangle(0, 0, w * 2, 70, 0x000000, 0.8).setOrigin(0, 0);
     this.progressoLinhaBg = this.add.rectangle(30, 20, w - 300, 6, 0x34495e).setOrigin(0, 0.5).setStrokeStyle(1, 0xbdc3c7);
-    this.progressoBandeira = this.add.text(w - 270, 20, '🏁', { fontSize: '24px' }).setOrigin(0.5, 0.5);
-    this.progressoIcone = this.add.text(30, 15, '🚚', { fontSize: '24px' }).setOrigin(0.5, 0.5);
+    this.progressoBandeira = this.add.text(w - 270, 20, '[FIM]', { fontSize: '18px', color: '#fff' }).setOrigin(0.5, 0.5);
+    this.progressoIcone = this.add.text(30, 15, '>', { fontSize: '24px', color: '#2ecc71', fontStyle: 'bold' }).setOrigin(0.5, 0.5);
 
-    this.cargasTexto = this.add.text(30, 45, `📦 SEGURAS: 3/3`, { fontFamily: 'Verdana', fontSize: '16px', color: '#ecf0f1', fontStyle: 'bold' });
-    this.moedasTexto = this.add.text(220, 45, `🪙 MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '16px', color: '#f1c40f', fontStyle: 'bold' });
+    this.cargasTexto = this.add.text(30, 45, `[CARGAS]: 3/3`, { fontFamily: 'Verdana', fontSize: '16px', color: '#ecf0f1', fontStyle: 'bold' });
+    this.moedasTexto = this.add.text(220, 45, `$ MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '16px', color: '#f1c40f', fontStyle: 'bold' });
     this.distanciaTexto = this.add.text(420, 45, `DISTÂNCIA: 0m`, { fontFamily: 'Verdana', fontSize: '16px', color: '#2ecc71', fontStyle: 'bold' });
 
-    this.botaoMenuHUD = this.add.text(w - 20, 35, '🏠 MENU', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#3498db', 2);
-    this.botaoReiniciarHUD = this.add.text(w - 130, 35, '🔄 RESET', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#e74c3c', 2);
+    this.botaoMenuHUD = this.add.text(w - 20, 35, 'MENU', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#3498db', 2);
+    this.botaoReiniciarHUD = this.add.text(w - 130, 35, 'RESET', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#e74c3c', 2);
     
     this.botaoMenuHUD.on('pointerdown', () => { SoundFX.pararMotor(); this.scene.get('GameScene').scene.stop(); this.scene.start('MenuScene'); });
     this.botaoReiniciarHUD.on('pointerdown', () => { SoundFX.pararMotor(); this.scene.stop(); this.scene.get('GameScene').scene.restart({ level: this.faseAtual }); });
@@ -329,25 +329,20 @@ class HUDScene extends Phaser.Scene {
     this.botaoAcaoCentralBg = this.add.rectangle(w/2, h/2 + 70, 350, 60, 0x000, 0.8).setStrokeStyle(3, 0xe74c3c).setInteractive({ useHandCursor: true }).setVisible(false);
     this.botaoAcaoCentralTxt = this.add.text(w/2, h/2 + 70, '', { fontFamily: 'Verdana', fontSize: '22px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5).setVisible(false);
 
-    this.scale.on('resize', this.redimensionar, this);
-
     // ==========================================
     // 📱 CONTROLES MOBILE (BOTÕES NA TELA)
     // ==========================================
-    // Configura o Phaser para aceitar mais de um toque simultâneo (multitouch)
     this.input.addPointer(2);
 
-    // Botão de Freio/Ré (Esquerda Inferior) com seta
     const btnFreioBg = this.add.circle(80, h - 80, 60, 0xe74c3c, 0.5).setInteractive();
-    const txtFreio = this.add.text(80, h - 80, '←', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const txtFreio = this.add.text(80, h - 80, '<', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     
     btnFreioBg.on('pointerdown', () => { this.isFreando = true; btnFreioBg.setAlpha(0.9); if(audioCtx.state === 'suspended') audioCtx.resume(); });
     btnFreioBg.on('pointerup', () => { this.isFreando = false; btnFreioBg.setAlpha(0.5); });
     btnFreioBg.on('pointerout', () => { this.isFreando = false; btnFreioBg.setAlpha(0.5); });
 
-    // Botão de Acelerar (Direita Inferior) com seta
     const btnAcelerarBg = this.add.circle(w - 80, h - 80, 60, 0x2ecc71, 0.5).setInteractive();
-    const txtAcelerar = this.add.text(w - 80, h - 80, '→', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const txtAcelerar = this.add.text(w - 80, h - 80, '>', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
     btnAcelerarBg.on('pointerdown', () => { this.isAcelerando = true; btnAcelerarBg.setAlpha(0.9); if(audioCtx.state === 'suspended') audioCtx.resume(); });
     btnAcelerarBg.on('pointerup', () => { this.isAcelerando = false; btnAcelerarBg.setAlpha(0.5); });
@@ -356,34 +351,23 @@ class HUDScene extends Phaser.Scene {
     // ==========================================
     // ⌨️ ATALHOS DE TECLADO (HOTKEYS)
     // ==========================================
-    
-    // Pressione 'R' para Reiniciar a fase
     this.input.keyboard!.on('keydown-R', () => {
       SoundFX.pararMotor(); 
       this.scene.stop(); 
       this.scene.get('GameScene').scene.restart({ level: this.faseAtual });
     });
 
-    // Pressione 'ESC' para voltar ao Menu Inicial
     this.input.keyboard!.on('keydown-ESC', () => {
       SoundFX.pararMotor(); 
       this.scene.get('GameScene').scene.stop(); 
       this.scene.start('MenuScene'); 
     });
-    
-  }
-
-  redimensionar(gameSize: Phaser.Structs.Size) {
-    const w = gameSize.width; const h = gameSize.height;
-    this.hudBar.setSize(w * 2, 70); this.progressoLinhaBg.setSize(w - 300, 6); this.progressoBandeira.setPosition(w - 270, 20);
-    this.botaoMenuHUD.setPosition(w - 20, 35); this.botaoReiniciarHUD.setPosition(w - 130, 35);
-    this.modalBg.setPosition(w/2, h/2); this.modalBox.setPosition(w/2, h/2); this.statusTexto.setPosition(w/2, h/2 - 40); this.botaoAcaoCentralBg.setPosition(w/2, h/2 + 70); this.botaoAcaoCentralTxt.setPosition(w/2, h/2 + 70);
   }
 
   atualizarDados(distancia: number, moedas: number, progresso: number) {
     this.distanciaTexto.setText(`DISTÂNCIA: ${distancia}m`);
-    this.moedasTexto.setText(`🪙 MOEDAS: ${moedas}`);
-    this.progressoIcone.setPosition(30 + (progresso * (this.scale.width - 300)), 15);
+    this.moedasTexto.setText(`$ MOEDAS: ${moedas}`);
+    this.progressoIcone.setPosition(30 + (progresso * (1280 - 300)), 15);
   }
 
   exibirModal(mensagem: string, corMsg: string, txtBotao: string, corBotao: number, acaoBotao: Function) {
@@ -393,7 +377,7 @@ class HUDScene extends Phaser.Scene {
     this.botaoAcaoCentralBg.off('pointerout').on('pointerout', () => this.botaoAcaoCentralBg.setFillStyle(0x000, 0.8));
     this.botaoAcaoCentralBg.off('pointerdown').on('pointerdown', acaoBotao as Function);
   }
-  marcarCargaPerdida() { this.cargasTexto.setText('📦 SEGURAS: FALHA').setColor('#e74c3c'); }
+  marcarCargaPerdida() { this.cargasTexto.setText('[CARGAS]: FALHA').setColor('#e74c3c'); }
 }
 
 // ==========================================
@@ -462,8 +446,6 @@ class GameScene extends Phaser.Scene {
       }
       if ((uA === 'carga' && (uB === 'ground' || uB === 'ponte' || uB === 'stone')) || (uB === 'carga' && (uA === 'ground' || uA === 'ponte' || uA === 'stone'))) this.perderJogo('CARGA CAIU!');
     });
-
-    this.scale.on('resize', this.redimensionarCenario, this);
   }
 
   atualizarCeu() {
@@ -524,9 +506,6 @@ class GameScene extends Phaser.Scene {
 
       yAtual += fixedBumps;
 
-      // ==========================================
-      // GERAÇÃO DE PONTES E RAMPAS
-      // ==========================================
       let fazerPonte = (fase >= 2 && i > 30 && i < totalSegmentos - 40 && i % 90 === 0);
       let fazerRampa = (i > 25 && i < totalSegmentos - 30 && i % 65 === 0 && !fazerPonte);
 
@@ -565,47 +544,33 @@ class GameScene extends Phaser.Scene {
         let endX = peakX + largRampa;
         let endY = yAnterior; 
 
-        // FÍSICA DO CHÃO (Reto por baixo da rampa)
         groundBody.createFixture(planck.Edge(new planck.Vec2(xAnterior * P2M, yAnterior * P2M), new planck.Vec2(endX * P2M, endY * P2M)), { friction: 0.9, userData: 'ground' });
-
-        // FÍSICA DA RAMPA (Formato A-Frame de madeira por cima)
         groundBody.createFixture(planck.Edge(new planck.Vec2(xAnterior * P2M, yAnterior * P2M), new planck.Vec2(peakX * P2M, peakY * P2M)), { friction: 0.8, userData: 'ponte' });
         groundBody.createFixture(planck.Edge(new planck.Vec2(peakX * P2M, peakY * P2M), new planck.Vec2(endX * P2M, endY * P2M)), { friction: 0.8, userData: 'ponte' });
 
-        // DESENHO DO CHÃO DE TERRA (Continua reto embaixo da rampa)
         linhaBase.lineTo(endX, endY + 12);
         linhaMeio.lineTo(endX, endY + 12);
         linhaTopo.lineTo(endX, endY + 4);
 
-        // VISUAL EXCLUSIVO DA RAMPA DE MADEIRA (A-Frame)
         const rampaVis = this.add.graphics().setDepth(11);
-        
-        // Pilares de sustentação de madeira escura
         rampaVis.lineStyle(6, 0x5d4037);
         for(let j=1; j<=5; j++) {
             let px = xAnterior + (largRampa/3)*j;
             if (px >= endX) break;
-            
-            // Calcula a altura da rampa no ponto X do pilar
             let py = px <= peakX ? yAnterior - (altRampa/largRampa)*(px - xAnterior) : peakY + (altRampa/largRampa)*(px - peakX);
             rampaVis.beginPath().moveTo(px, py).lineTo(px, yAnterior + 4).strokePath();
         }
 
-        // Pranchas principais de madeira clara
         rampaVis.lineStyle(16, 0x8d6e63);
         rampaVis.beginPath().moveTo(xAnterior, yAnterior).lineTo(peakX, peakY).lineTo(endX, endY).strokePath();
-        
-        // Contornos e pregos das pranchas
         rampaVis.lineStyle(4, 0x4a2311);
         rampaVis.beginPath().moveTo(xAnterior, yAnterior - 8).lineTo(peakX, peakY - 8).lineTo(endX, endY - 8).strokePath();
         rampaVis.beginPath().moveTo(xAnterior, yAnterior + 8).lineTo(peakX, peakY + 8).lineTo(endX, endY + 8).strokePath();
 
-        // Arco de Moedas no topo da rampa
         this.criarMoeda(peakX - 30, peakY - 30);
         this.criarMoeda(peakX, peakY - 50);
         this.criarMoeda(peakX + 30, peakY - 30);
 
-        // Atualiza a posição do mapa
         xAnterior = endX;
         yAnterior = endY;
         i += Math.floor((largRampa * 2) / tamanhoSegmento);
@@ -779,14 +744,11 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  redimensionarCenario(_gameSize: Phaser.Structs.Size) { this.atualizarCeu(); }
-
   update(_time: number, delta: number) {
     if (this.isGameOver) return;
 
     this.mundoFisico.step(delta / 1000);
 
-    // SOLUÇÃO: Corta o update no mesmo frame se a física detectou o fim de jogo!
     if (this.isGameOver) return;
 
     const posChassi = this.chassiBody.getPosition();
@@ -830,9 +792,6 @@ class GameScene extends Phaser.Scene {
     for (let ce = this.rodaTrasBody.getContactList(); ce; ce = ce.next) { if (ce.contact.isTouching() && (ce.contact.getFixtureA().getUserData() === 'ground' || ce.contact.getFixtureA().getUserData() === 'ponte' || ce.contact.getFixtureA().getUserData() === 'stone' || ce.contact.getFixtureB().getUserData() === 'ground' || ce.contact.getFixtureB().getUserData() === 'ponte' || ce.contact.getFixtureB().getUserData() === 'stone')) noChao = true; }
     for (let ce = this.rodaFrenteBody.getContactList(); ce; ce = ce.next) { if (ce.contact.isTouching() && (ce.contact.getFixtureA().getUserData() === 'ground' || ce.contact.getFixtureA().getUserData() === 'ponte' || ce.contact.getFixtureA().getUserData() === 'stone' || ce.contact.getFixtureB().getUserData() === 'ground' || ce.contact.getFixtureB().getUserData() === 'ponte' || ce.contact.getFixtureB().getUserData() === 'stone')) noChao = true; }
 
-    // ==========================================
-    // NOVA LÓGICA DE CONTROLES (PC + MOBILE + WASD)
-    // ==========================================
     const hudMobile = this.scene.get('HUDScene') as any;
     const mobileAcelerando = hudMobile && hudMobile.isAcelerando;
     const mobileFreando = hudMobile && hudMobile.isFreando;
@@ -843,21 +802,17 @@ class GameScene extends Phaser.Scene {
     const velocidadeRad = Math.PI * 12; 
     const forcaInclinar = noChao ? 0.5 : 3.5; 
 
-    // O áudio liga se estiver tentando acelerar ou frear
     SoundFX.atualizarMotor(querAcelerar || querFrear, !noChao);
 
-    // Se apertar a seta pra direita, tecla D OU o botão mobile da direita
     if (querAcelerar) {
       this.molaTras.setMotorSpeed(velocidadeRad); this.molaFrente.setMotorSpeed(velocidadeRad);
       this.chassiBody.applyAngularImpulse(-forcaInclinar, true); 
       if (noChao) { this.poeiraEmitter.start(); this.poeiraEmitter.setPosition(posRT.x * M2P, posRT.y * M2P + 20); } else { this.poeiraEmitter.stop(); }
     } 
-    // Se apertar a seta pra esquerda, tecla A OU o botão mobile da esquerda
     else if (querFrear) {
       this.molaTras.setMotorSpeed(-velocidadeRad); this.molaFrente.setMotorSpeed(-velocidadeRad);
       this.chassiBody.applyAngularImpulse(forcaInclinar, true); this.poeiraEmitter.stop();
     } 
-    // Se não apertar nada
     else {
       this.molaTras.setMotorSpeed(0); this.molaFrente.setMotorSpeed(0); this.poeiraEmitter.stop();
     }
@@ -866,7 +821,13 @@ class GameScene extends Phaser.Scene {
 
 const config: Phaser.Types.Core.GameConfig = { 
   type: Phaser.AUTO, 
-  scale: { mode: Phaser.Scale.RESIZE, parent: document.body, width: '100%', height: '100%' }, 
+  scale: { 
+    mode: Phaser.Scale.FIT, 
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    parent: document.body, 
+    width: 1280, 
+    height: 720 
+  }, 
   scene: [MenuScene, ShopScene, GameScene, HUDScene] 
 };
 
