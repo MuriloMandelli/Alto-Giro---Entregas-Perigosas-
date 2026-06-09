@@ -524,7 +524,11 @@ class GameScene extends Phaser.Scene {
 
       yAtual += fixedBumps;
 
+      // ==========================================
+      // GERAÇÃO DE PONTES E RAMPAS
+      // ==========================================
       let fazerPonte = (fase >= 2 && i > 30 && i < totalSegmentos - 40 && i % 90 === 0);
+      let fazerRampa = (i > 25 && i < totalSegmentos - 30 && i % 65 === 0 && !fazerPonte);
 
       if (fazerPonte) {
         linhaBase.lineTo(xAnterior, 1500).closePath().fillPath();
@@ -550,6 +554,62 @@ class GameScene extends Phaser.Scene {
         linhaBase.fillStyle(cBase).beginPath().moveTo(xAnterior, 1500).lineTo(xAnterior, yAnterior + 12);
         linhaMeio.beginPath().moveTo(xAnterior, yAnterior + 12); linhaTopo.beginPath().moveTo(xAnterior, yAnterior + 4);
         i += 12; continue; 
+      }
+
+      if (fazerRampa) {
+        let altRampa = fase === 1 ? 35 : (fase === 2 ? 55 : 80);
+        let largRampa = fase === 1 ? 140 : (fase === 2 ? 130 : 120);
+
+        let peakX = xAnterior + largRampa;
+        let peakY = yAnterior - altRampa;
+        let endX = peakX + largRampa;
+        let endY = yAnterior; 
+
+        // FÍSICA DO CHÃO (Reto por baixo da rampa)
+        groundBody.createFixture(planck.Edge(new planck.Vec2(xAnterior * P2M, yAnterior * P2M), new planck.Vec2(endX * P2M, endY * P2M)), { friction: 0.9, userData: 'ground' });
+
+        // FÍSICA DA RAMPA (Formato A-Frame de madeira por cima)
+        groundBody.createFixture(planck.Edge(new planck.Vec2(xAnterior * P2M, yAnterior * P2M), new planck.Vec2(peakX * P2M, peakY * P2M)), { friction: 0.8, userData: 'ponte' });
+        groundBody.createFixture(planck.Edge(new planck.Vec2(peakX * P2M, peakY * P2M), new planck.Vec2(endX * P2M, endY * P2M)), { friction: 0.8, userData: 'ponte' });
+
+        // DESENHO DO CHÃO DE TERRA (Continua reto embaixo da rampa)
+        linhaBase.lineTo(endX, endY + 12);
+        linhaMeio.lineTo(endX, endY + 12);
+        linhaTopo.lineTo(endX, endY + 4);
+
+        // VISUAL EXCLUSIVO DA RAMPA DE MADEIRA (A-Frame)
+        const rampaVis = this.add.graphics().setDepth(11);
+        
+        // Pilares de sustentação de madeira escura
+        rampaVis.lineStyle(6, 0x5d4037);
+        for(let j=1; j<=5; j++) {
+            let px = xAnterior + (largRampa/3)*j;
+            if (px >= endX) break;
+            
+            // Calcula a altura da rampa no ponto X do pilar
+            let py = px <= peakX ? yAnterior - (altRampa/largRampa)*(px - xAnterior) : peakY + (altRampa/largRampa)*(px - peakX);
+            rampaVis.beginPath().moveTo(px, py).lineTo(px, yAnterior + 4).strokePath();
+        }
+
+        // Pranchas principais de madeira clara
+        rampaVis.lineStyle(16, 0x8d6e63);
+        rampaVis.beginPath().moveTo(xAnterior, yAnterior).lineTo(peakX, peakY).lineTo(endX, endY).strokePath();
+        
+        // Contornos e pregos das pranchas
+        rampaVis.lineStyle(4, 0x4a2311);
+        rampaVis.beginPath().moveTo(xAnterior, yAnterior - 8).lineTo(peakX, peakY - 8).lineTo(endX, endY - 8).strokePath();
+        rampaVis.beginPath().moveTo(xAnterior, yAnterior + 8).lineTo(peakX, peakY + 8).lineTo(endX, endY + 8).strokePath();
+
+        // Arco de Moedas no topo da rampa
+        this.criarMoeda(peakX - 30, peakY - 30);
+        this.criarMoeda(peakX, peakY - 50);
+        this.criarMoeda(peakX + 30, peakY - 30);
+
+        // Atualiza a posição do mapa
+        xAnterior = endX;
+        yAnterior = endY;
+        i += Math.floor((largRampa * 2) / tamanhoSegmento);
+        continue;
       }
 
       groundBody.createFixture(planck.Edge(new planck.Vec2(xAnterior * P2M, yAnterior * P2M), new planck.Vec2(xAtual * P2M, yAtual * P2M)), { friction: 0.9, userData: 'ground' });
