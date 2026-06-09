@@ -2,13 +2,24 @@ import * as Phaser from 'phaser';
 import * as planck from 'planck';
 
 // ==========================================
-// 💥 TRAVA DE TELA CHEIA (CORRIGIDA PARA FIT) 💥
+// 💥 TRAVA DE TELA CHEIA (ANTI-ZOOM ANDROID DEFINITIVO) 💥
 // ==========================================
+// 1. Injeta a tag meta ultra-agressiva para bloquear qualquer tentativa de zoom
+let meta = document.querySelector('meta[name="viewport"]');
+if (!meta) { meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); document.head.appendChild(meta); }
+meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover');
+
+// 2. CSS com "position: fixed" para anular o bug da barra de endereços do Chrome no Android
 const style = document.createElement('style');
 style.innerHTML = `
-  * { margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }
-  html, body, #app { width: 100vw !important; height: 100vh !important; max-width: none !important; overflow: hidden !important; background-color: #050505 !important; display: block !important; }
-  canvas { display: block !important; margin: 0 auto !important; } 
+  * { margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; touch-action: none !important; }
+  html, body, #app { 
+    position: fixed !important; 
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    width: 100% !important; height: 100% !important; 
+    overflow: hidden !important; background-color: #050505 !important; 
+  }
+  canvas { display: block !important; margin: 0 auto !important; max-width: 100% !important; max-height: 100% !important; } 
 `;
 document.head.appendChild(style);
 
