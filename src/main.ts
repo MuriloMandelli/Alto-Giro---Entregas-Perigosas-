@@ -4,12 +4,10 @@ import * as planck from 'planck';
 // ==========================================
 // 💥 TRAVA DE TELA CHEIA (ANTI-ZOOM ANDROID DEFINITIVO) 💥
 // ==========================================
-// 1. Injeta a tag meta ultra-agressiva para bloquear qualquer tentativa de zoom
 let meta = document.querySelector('meta[name="viewport"]');
 if (!meta) { meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); document.head.appendChild(meta); }
 meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover');
 
-// 2. CSS com "position: fixed" para anular o bug da barra de endereços do Chrome no Android
 const style = document.createElement('style');
 style.innerHTML = `
   * { margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; touch-action: none !important; }
@@ -192,11 +190,9 @@ const desenharPinheiro = (graphics: Phaser.GameObjects.Graphics, x: number, y: n
 // ==========================================
 const desenharFundoLindo = (scene: Phaser.Scene, width: number, height: number) => {
   const bg = scene.add.graphics();
-  // Céu Azul
   bg.fillGradientStyle(0x87CEEB, 0x87CEEB, 0xadd8e6, 0xffffff, 1);
   bg.fillRect(0, 0, width, height);
 
-  // Sol
   scene.add.circle(width * 0.15, height * 0.2, Math.min(width, height) * 0.1, 0xfff200, 1);
 
   const desenharCamada = (corTopo: number, corBase: number, alturaBase: number, amplitude: number, frequencia: number) => {
@@ -236,7 +232,7 @@ class MenuScene extends Phaser.Scene {
     this.add.text(w / 2, h * 0.32, textoNarrativa, { fontFamily: 'Verdana', fontSize: '18px', color: '#ecf0f1', align: 'center', lineSpacing: 6, fontStyle: 'bold', shadow: { offsetX: 2, offsetY: 2, color: '#000', blur: 4, fill: true } }).setOrigin(0.5);
     
     this.add.rectangle(w / 2, h * 0.46, 250, 45, 0x000000, 0.9).setStrokeStyle(2, 0xf1c40f);
-    this.add.text(w / 2, h * 0.46, `$ SALDO: ${gameData.moedas}`, { fontFamily: 'Impact', fontSize: '24px', color: '#f1c40f', letterSpacing: 2 }).setOrigin(0.5);
+    this.add.text(w / 2, h * 0.46, `💰 SALDO: ${gameData.moedas}`, { fontFamily: 'Impact', fontSize: '24px', color: '#f1c40f', letterSpacing: 2 }).setOrigin(0.5);
 
     const criarBotao = (y: number, texto: string, cor: string, acao: Function) => {
       const btnBg = this.add.rectangle(w / 2, y, 350, 50, 0x000, 0.8).setInteractive({ useHandCursor: true }).setStrokeStyle(3, parseInt(cor.replace('#', '0x')));
@@ -249,7 +245,7 @@ class MenuScene extends Phaser.Scene {
     criarBotao(h * 0.58, '▶ FASE 1: Colinas Verdes', '#2ecc71', () => this.scene.start('GameScene', { level: 1 }));
     criarBotao(h * 0.68, '▶ FASE 2: Floresta Sombria', '#e67e22', () => this.scene.start('GameScene', { level: 2 }));
     criarBotao(h * 0.78, '▶ FASE 3: Deserto Rochoso', '#e74c3c', () => this.scene.start('GameScene', { level: 3 }));
-    criarBotao(h * 0.88, '[ ACESSAR GARAGEM ]', '#3498db', () => this.scene.start('ShopScene'));
+    criarBotao(h * 0.88, '🛒 ACESSAR GARAGEM', '#3498db', () => this.scene.start('ShopScene'));
   }
 }
 
@@ -266,7 +262,7 @@ class ShopScene extends Phaser.Scene {
     this.add.text(w / 2, 80, 'GARAGEM', { fontFamily: 'Impact', fontSize: '56px', color: '#ffffff', stroke: '#000', strokeThickness: 6, padding: { right: 15 } }).setOrigin(0.5);
     
     this.add.rectangle(w / 2, 140, 300, 50, 0x000000, 0.7).setStrokeStyle(2, 0xf1c40f).setOrigin(0.5);
-    this.add.text(w / 2, 140, `$ MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '24px', color: '#f1c40f', fontStyle: 'bold' }).setOrigin(0.5);
+    this.add.text(w / 2, 140, `💰 MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '24px', color: '#f1c40f', fontStyle: 'bold' }).setOrigin(0.5);
 
     const espacamento = w / 4;
     CATÁLOGO_CARROS.forEach((carro, index) => {
@@ -286,7 +282,7 @@ class ShopScene extends Phaser.Scene {
 
       const isUnlocked = gameData.unlocked.includes(carro.id); const isActive = gameData.activeCar === carro.id;
       const btnBg = this.add.rectangle(xPos, h / 2 + 150, 220, 50, isActive ? 0x27ae60 : (isUnlocked ? 0x2980b9 : 0x000), isActive||isUnlocked ? 1 : 0.8).setInteractive({ useHandCursor: true }).setStrokeStyle(2, isActive ? 0x2ecc71 : (isUnlocked ? 0x3498db : 0xe74c3c));
-      this.add.text(xPos, h / 2 + 150, isActive ? 'SELECIONADO' : (isUnlocked ? 'EQUIPAR' : `COMPRAR $ ${carro.preco}`), { fontFamily: 'Verdana', fontSize: '18px', color: isActive||isUnlocked ? '#fff' : '#e74c3c', fontStyle: 'bold' }).setOrigin(0.5);
+      this.add.text(xPos, h / 2 + 150, isActive ? 'SELECIONADO' : (isUnlocked ? 'EQUIPAR' : `COMPRAR 💰 ${carro.preco}`), { fontFamily: 'Verdana', fontSize: '18px', color: isActive||isUnlocked ? '#fff' : '#e74c3c', fontStyle: 'bold' }).setOrigin(0.5);
 
       btnBg.on('pointerdown', () => {
         if (isUnlocked) { gameData.activeCar = carro.id; salvarJogo(); this.scene.restart(); }
@@ -295,13 +291,13 @@ class ShopScene extends Phaser.Scene {
       });
     });
 
-    const btnVoltar = this.add.text(20, 20, '< VOLTAR', { fontSize: '20px', color: '#e74c3c', backgroundColor: '#000', padding: { x: 15, y: 10 } }).setStroke('#e74c3c', 2).setInteractive({ useHandCursor: true });
+    const btnVoltar = this.add.text(20, 20, '⬅ VOLTAR', { fontSize: '20px', color: '#e74c3c', backgroundColor: '#000', padding: { x: 15, y: 10 } }).setStroke('#e74c3c', 2).setInteractive({ useHandCursor: true });
     btnVoltar.on('pointerdown', () => this.scene.start('MenuScene'));
   }
 }
 
 // ==========================================
-// CENA 3: HUD SCENE
+// CENA 3: HUD SCENE (REVISADA)
 // ==========================================
 class HUDScene extends Phaser.Scene {
   hudBar!: Phaser.GameObjects.Rectangle; progressoLinhaBg!: Phaser.GameObjects.Rectangle; progressoBandeira!: Phaser.GameObjects.Text; progressoIcone!: Phaser.GameObjects.Text;
@@ -319,22 +315,28 @@ class HUDScene extends Phaser.Scene {
   create() {
     const w = this.scale.width; const h = this.scale.height;
 
-    this.hudBar = this.add.rectangle(0, 0, w * 2, 70, 0x000000, 0.8).setOrigin(0, 0);
+    // Fundo do HUD redesenhado com tamanho seguro
+    this.hudBar = this.add.rectangle(0, 0, w, 70, 0x000000, 0.85).setOrigin(0, 0);
+    
+    // Barra de Progresso, Caminhão e Bandeira
     this.progressoLinhaBg = this.add.rectangle(30, 20, w - 300, 6, 0x34495e).setOrigin(0, 0.5).setStrokeStyle(1, 0xbdc3c7);
-    this.progressoBandeira = this.add.text(w - 270, 20, '[FIM]', { fontSize: '18px', color: '#fff' }).setOrigin(0.5, 0.5);
-    this.progressoIcone = this.add.text(30, 15, '>', { fontSize: '24px', color: '#2ecc71', fontStyle: 'bold' }).setOrigin(0.5, 0.5);
+    this.progressoBandeira = this.add.text(w - 270, 20, '🏁', { fontSize: '24px' }).setOrigin(0.5, 0.5);
+    this.progressoIcone = this.add.text(30, 15, '🚚', { fontSize: '24px' }).setOrigin(0.5, 0.5);
 
-    this.cargasTexto = this.add.text(30, 45, `[CARGAS]: 3/3`, { fontFamily: 'Verdana', fontSize: '16px', color: '#ecf0f1', fontStyle: 'bold' });
-    this.moedasTexto = this.add.text(220, 45, `$ MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '16px', color: '#f1c40f', fontStyle: 'bold' });
-    this.distanciaTexto = this.add.text(420, 45, `DISTÂNCIA: 0m`, { fontFamily: 'Verdana', fontSize: '16px', color: '#2ecc71', fontStyle: 'bold' });
+    // Textos de Status
+    this.cargasTexto = this.add.text(30, 45, `📦 SEGURAS: 3/3`, { fontFamily: 'Verdana', fontSize: '16px', color: '#ecf0f1', fontStyle: 'bold' });
+    this.moedasTexto = this.add.text(220, 45, `💰 MOEDAS: ${gameData.moedas}`, { fontFamily: 'Verdana', fontSize: '16px', color: '#f1c40f', fontStyle: 'bold' });
+    this.distanciaTexto = this.add.text(420, 45, `📏 DISTÂNCIA: 0m`, { fontFamily: 'Verdana', fontSize: '16px', color: '#2ecc71', fontStyle: 'bold' });
 
-    this.botaoMenuHUD = this.add.text(w - 20, 35, 'MENU', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#3498db', 2);
-    this.botaoReiniciarHUD = this.add.text(w - 130, 35, 'RESET', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#e74c3c', 2);
+    // Botões Superiores Direitos
+    this.botaoMenuHUD = this.add.text(w - 20, 35, '🏠 MENU', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#3498db', 2);
+    this.botaoReiniciarHUD = this.add.text(w - 130, 35, '🔄 RESET', { fontFamily:'Verdana', fontSize: '14px', color: '#fff', backgroundColor: '#000', padding: { x: 15, y: 8 } }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setStroke('#e74c3c', 2);
     
     this.botaoMenuHUD.on('pointerdown', () => { SoundFX.pararMotor(); this.scene.get('GameScene').scene.stop(); this.scene.start('MenuScene'); });
     this.botaoReiniciarHUD.on('pointerdown', () => { SoundFX.pararMotor(); this.scene.stop(); this.scene.get('GameScene').scene.restart({ level: this.faseAtual }); });
 
-    this.modalBg = this.add.rectangle(w/2, h/2, w*2, h*2, 0x000000, 0.85).setVisible(false);
+    // Modal de Fim de Jogo
+    this.modalBg = this.add.rectangle(w/2, h/2, w, h, 0x000000, 0.85).setVisible(false);
     this.modalBox = this.add.rectangle(w/2, h/2, 600, 300, 0x111111, 1).setStrokeStyle(4, 0x34495e).setVisible(false);
     this.statusTexto = this.add.text(w / 2, h / 2 - 40, '', { fontFamily: 'Impact', fontSize: '64px', color: '#ffffff', letterSpacing: 2 }).setOrigin(0.5).setVisible(false);
     this.botaoAcaoCentralBg = this.add.rectangle(w/2, h/2 + 70, 350, 60, 0x000, 0.8).setStrokeStyle(3, 0xe74c3c).setInteractive({ useHandCursor: true }).setVisible(false);
@@ -346,14 +348,14 @@ class HUDScene extends Phaser.Scene {
     this.input.addPointer(2);
 
     const btnFreioBg = this.add.circle(80, h - 80, 60, 0xe74c3c, 0.5).setInteractive();
-    const txtFreio = this.add.text(80, h - 80, '<', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const txtFreio = this.add.text(80, h - 80, '←', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
     
     btnFreioBg.on('pointerdown', () => { this.isFreando = true; btnFreioBg.setAlpha(0.9); if(audioCtx.state === 'suspended') audioCtx.resume(); });
     btnFreioBg.on('pointerup', () => { this.isFreando = false; btnFreioBg.setAlpha(0.5); });
     btnFreioBg.on('pointerout', () => { this.isFreando = false; btnFreioBg.setAlpha(0.5); });
 
     const btnAcelerarBg = this.add.circle(w - 80, h - 80, 60, 0x2ecc71, 0.5).setInteractive();
-    const txtAcelerar = this.add.text(w - 80, h - 80, '>', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
+    const txtAcelerar = this.add.text(w - 80, h - 80, '→', { fontSize: '50px', color: '#ffffff', fontStyle: 'bold' }).setOrigin(0.5);
 
     btnAcelerarBg.on('pointerdown', () => { this.isAcelerando = true; btnAcelerarBg.setAlpha(0.9); if(audioCtx.state === 'suspended') audioCtx.resume(); });
     btnAcelerarBg.on('pointerup', () => { this.isAcelerando = false; btnAcelerarBg.setAlpha(0.5); });
@@ -376,9 +378,11 @@ class HUDScene extends Phaser.Scene {
   }
 
   atualizarDados(distancia: number, moedas: number, progresso: number) {
-    this.distanciaTexto.setText(`DISTÂNCIA: ${distancia}m`);
-    this.moedasTexto.setText(`$ MOEDAS: ${moedas}`);
-    this.progressoIcone.setPosition(30 + (progresso * (1280 - 300)), 15);
+    const w = this.scale.width;
+    this.distanciaTexto.setText(`📏 DISTÂNCIA: ${distancia}m`);
+    this.moedasTexto.setText(`💰 MOEDAS: ${moedas}`);
+    // Calcula o deslocamento do carrinho com base na largura da barra de progresso
+    this.progressoIcone.setPosition(30 + (progresso * (w - 300)), 15);
   }
 
   exibirModal(mensagem: string, corMsg: string, txtBotao: string, corBotao: number, acaoBotao: Function) {
@@ -388,7 +392,7 @@ class HUDScene extends Phaser.Scene {
     this.botaoAcaoCentralBg.off('pointerout').on('pointerout', () => this.botaoAcaoCentralBg.setFillStyle(0x000, 0.8));
     this.botaoAcaoCentralBg.off('pointerdown').on('pointerdown', acaoBotao as Function);
   }
-  marcarCargaPerdida() { this.cargasTexto.setText('[CARGAS]: FALHA').setColor('#e74c3c'); }
+  marcarCargaPerdida() { this.cargasTexto.setText('📦 SEGURAS: FALHA').setColor('#e74c3c'); }
 }
 
 // ==========================================
